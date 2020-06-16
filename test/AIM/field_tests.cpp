@@ -40,14 +40,14 @@ struct EQUIVALENCE_BASE : public PARAMETERS {
   std::vector<Eigen::Vector3d> default_pos;
 
   EQUIVALENCE_BASE()
-      : PARAMETERS(6, 256),
-        default_pos{{0.57, 0.28, 0.04}, {0.76, 0.48, 0.41}, {0.78, 0.56, 0.24},
-                    {0.42, 0.66, 0.70}, {0.07, 0.77, 0.77}, {0.68, 0.99, 0.45}}
+      : PARAMETERS(6, 256), default_pos{{0.57, 0.28, 0.04}, {0.76, 0.48, 0.41},
+                                        {0.78, 0.56, 0.24}, {0.42, 0.66, 0.70},
+                                        {0.07, 0.77, 0.77}, {0.68, 0.99, 0.45}}
   {
     history->fill(Eigen::Vector2cd::Zero());
     for(int i = 0; i < n_pts; ++i) {
       for(int t = -10; t < n_steps; ++t) {
-        history->array_[i][t][0] = Eigen::Vector2cd(
+        history->set_value(i, t, 0) = Eigen::Vector2cd(
             0, gaussian((t - n_steps / 2.0) / (n_steps / 12.0)));
       }
     }

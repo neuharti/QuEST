@@ -56,8 +56,8 @@ struct SimulationStructures : Parameters {
 
     // == Initialize history ==
     for(int i = -num_timesteps / 2; i < num_timesteps; ++i) {
-      history->array_[0][i][0] = Eigen::Vector2cd(0, src_fn(i * dt));
-      history->array_[1][i][0] = Eigen::Vector2cd(0, 0);
+      history->set_value(0, i, 0) = Eigen::Vector2cd(0, src_fn(i * dt));
+      history->set_value(1, i, 0) = Eigen::Vector2cd(0, 0);
     }
   }
 };

@@ -17,17 +17,19 @@ namespace Integrator {
   inline namespace history_enums {
     enum DIMENSION { PARTICLES, TIMES, DERIVATIVES };
     enum ORDER { DERIV_0, DERIV_1 };
-  }
-}
+  }  // namespace history_enums
+}  // namespace Integrator
 
 template <class soltype>
 class Integrator::History {
  public:
   History(const int, const int, const int, const int = 2);
-  soltype_array<soltype> array_;
+  soltype_array<soltype> array_;  // TODO: make private
 
   void fill(const soltype &);
   void initialize_past(const soltype &);
+  soltype &set_value(const int, const int, const int);
+  soltype get_value(const int, const int, const int) const;
 
  private:
 };
@@ -39,7 +41,7 @@ Integrator::History<soltype>::History(const int num_particles,
                                       const int num_derivatives)
     : array_(boost::extents[num_particles][
           typename soltype_array<soltype>::extent_range(-window, num_timesteps)]
-                          [num_derivatives])
+                           [num_derivatives])
 
 {
 }
@@ -58,6 +60,22 @@ void Integrator::History<soltype>::initialize_past(const soltype &val)
       array_[n][t][DERIV_0] = val;
     }
   }
+}
+
+template <class soltype>
+soltype Integrator::History<soltype>::get_value(const int particle_idx,
+                                                const int time_idx,
+                                                const int derivative_idx) const
+{
+  return this->array_[particle_idx][time_idx][derivative_idx];
+}
+
+template <class soltype>
+soltype &Integrator::History<soltype>::set_value(const int particle_idx,
+                                                 const int time_idx,
+                                                 const int derivative_idx)
+{
+  return this->array_[particle_idx][time_idx][derivative_idx];
 }
 
 #endif

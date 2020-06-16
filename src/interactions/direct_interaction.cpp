@@ -60,17 +60,17 @@ const InteractionBase::ResultArray &DirectInteraction::evaluate(
                    static_cast<int>(history->array_.index_bases()[1]));
 
       past_terms_of_convolution[src] +=
-          (history->array_[obs][s][0])[RHO_01] * coefficients[pair_idx][i];
+          (history->get_value(obs, s, 0))[RHO_01] * coefficients[pair_idx][i];
       past_terms_of_convolution[obs] +=
-          (history->array_[src][s][0])[RHO_01] * coefficients[pair_idx][i];
+          (history->get_value(src, s, 0))[RHO_01] * coefficients[pair_idx][i];
     }
     const int s = std::max(time_idx - floor_delays[pair_idx],
                            static_cast<int>(history->array_.index_bases()[1]));
 
     results[src] +=
-        (history->array_[obs][s][0])[RHO_01] * coefficients[pair_idx][0];
+        (history->get_value(obs, s, 0))[RHO_01] * coefficients[pair_idx][0];
     results[obs] +=
-        (history->array_[src][s][0])[RHO_01] * coefficients[pair_idx][0];
+        (history->get_value(src, s, 0))[RHO_01] * coefficients[pair_idx][0];
   }
   results += past_terms_of_convolution;
   return results;
@@ -91,9 +91,9 @@ const InteractionBase::ResultArray &DirectInteraction::evaluate_present_field(
                            static_cast<int>(history->array_.index_bases()[1]));
 
     results[src] +=
-        (history->array_[obs][s][0])[RHO_01] * coefficients[pair_idx][0];
+        (history->get_value(obs, s, 0))[RHO_01] * coefficients[pair_idx][0];
     results[obs] +=
-        (history->array_[src][s][0])[RHO_01] * coefficients[pair_idx][0];
+        (history->get_value(src, s, 0))[RHO_01] * coefficients[pair_idx][0];
   }
   results += past_terms_of_convolution;
   return results;

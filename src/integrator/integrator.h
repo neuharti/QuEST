@@ -91,9 +91,9 @@ void Integrator::PredictorCorrector<soltype>::predictor(const int step) const
 
   for(int sol_idx = 0; sol_idx < num_solutions; ++sol_idx) {
     for(int h = 0; h < static_cast<int>(weights.width()); ++h) {
-      history->array_[sol_idx][step][0] +=
-          history->array_[sol_idx][start + h][0] * weights.ps(0, h) +
-          history->array_[sol_idx][start + h][1] * weights.ps(1, h) * dt;
+      history->set_value(sol_idx, step, 0) +=
+          history->get_value(sol_idx, start + h, 0) * weights.ps(0, h) +
+          history->get_value(sol_idx, start + h, 1) * weights.ps(1, h) * dt;
     }
   }
 }
@@ -104,12 +104,12 @@ void Integrator::PredictorCorrector<soltype>::corrector(const int step) const
   const int start = step - weights.width();
 
   for(int sol_idx = 0; sol_idx < num_solutions; ++sol_idx) {
-    history->array_[sol_idx][step][0] =
-        weights.future_coef * history->array_[sol_idx][step][1] * dt;
+    history->set_value(sol_idx, step, 0) =
+        weights.future_coef * history->get_value(sol_idx, step, 1) * dt;
     for(int h = 0; h < static_cast<int>(weights.width()); ++h) {
-      history->array_[sol_idx][step][0] +=
-          history->array_[sol_idx][start + h][0] * weights.cs(0, h) +
-          history->array_[sol_idx][start + h][1] * weights.cs(1, h) * dt;
+      history->set_value(sol_idx, step, 0) +=
+          history->get_value(sol_idx, start + h, 0) * weights.cs(0, h) +
+          history->get_value(sol_idx, start + h, 1) * weights.cs(1, h) * dt;
     }
   }
 }
