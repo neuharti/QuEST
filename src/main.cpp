@@ -127,20 +127,6 @@ int main(int argc, char *argv[])
 
     if(durationLogger) { durationLogger->log_event("Full solution"); }
 
-    // == OUTPUT =====================================================
-
-    cout << "Writing output..." << endl;
-    ofstream outfile("output.dat");
-    outfile << scientific << setprecision(15);
-    for(int t = 0; t < config.num_timesteps; ++t) {
-      for(int n = 0; n < config.num_particles; ++n) {
-        outfile << history->array_[n][t][0].transpose() << " ";
-      }
-      outfile << "\n";
-    }
-
-    if(durationLogger) { durationLogger->log_event("Write output"); }
-
   } catch(CommandLineException &e) {
     // User most likely queried for help or version info, so we can silently
     // move on

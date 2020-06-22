@@ -26,6 +26,8 @@ class Integrator::PredictorCorrector {
                      std::unique_ptr<Integrator::RHS<soltype>>);
   void solve(const log_level_t = log_level_t::LOG_NOTHING) const;
 
+  void output_writer(const int) const;
+
  private:
   int num_solutions, time_idx_ubound, num_corrector_steps;
   double dt;
@@ -66,6 +68,8 @@ void Integrator::PredictorCorrector<soltype>::solve(
 {
   for(int step = 0; step < time_idx_ubound; ++step) {
     solve_step(step);
+    history->write_step_to_file(step);
+
     if(log_level >= log_level_t::LOG_INFO) log_percentage_complete(step);
   }
 }
