@@ -1,8 +1,6 @@
 #ifndef INTEGRATOR_H
 #define INTEGRATOR_H
 
-#include <string>
-
 #include "RHS/rhs.h"
 #include "history.h"
 #include "logging.h"

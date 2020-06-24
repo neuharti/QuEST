@@ -45,7 +45,8 @@ int main(int argc, char *argv[])
     // == HISTORY ====================================================
 
     auto history = make_shared<Integrator::History<Eigen::Vector2cd>>(
-        config.num_particles, 22, config.num_timesteps);
+        config.num_particles, 22, config.num_timesteps, config.dt, config.c0,
+        qds);
     history->fill(Eigen::Vector2cd::Zero());
     history->initialize_past(Eigen::Vector2cd(1, 0));
 

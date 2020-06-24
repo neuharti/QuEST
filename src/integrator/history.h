@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <iostream>
 #include <memory>
+#include "../quantum_dot.h"
 
 namespace Integrator {
   template <class soltype>
@@ -25,6 +26,13 @@ template <class soltype>
 class Integrator::History {
  public:
   History(const int, const int, const int, const int = 2);
+  History(const int,
+          const int,
+          const int,
+          const double,
+          const double,
+          std::shared_ptr<DotVector>,
+          const int = 2);
   ~History();
   soltype_array<soltype> array_;  // TODO: make private
 
@@ -35,11 +43,11 @@ class Integrator::History {
 
   void write_step_to_file(const int);
 
-  int num_particles;  // make private?
-  int num_timesteps;  // make private?
+  int num_particles;
+  int num_timesteps;
 
  private:
-  std::ofstream outfile;  // BUG: something is wrong with this object
+  std::ofstream outfile;
   template <class B = soltype>
   typename std::enable_if<std::is_same<B, Eigen::Vector2cd>::value,
                           Eigen::RowVector2cd>::type
@@ -62,6 +70,28 @@ Integrator::History<soltype>::History(const int num_particles,
                            [num_derivatives])
 {
   // outfile = std::make_unique<std::ofstream>("output.dat");
+  outfile.open("output.dat");
+  outfile << std::scientific << std::setprecision(15);
+}
+
+template <class soltype>
+Integrator::History<soltype>::History(const int num_particles,
+                                      const int window,
+                                      const int num_timesteps,
+                                      const double dt,
+                                      const double c0,
+                                      std::shared_ptr<DotVector> dots,
+                                      const int num_derivatives)
+    : num_particles(num_particles),
+      num_timesteps(num_timesteps),
+      array_(boost::extents[num_particles][
+          typename soltype_array<soltype>::extent_range(-window, num_timesteps)]
+                           [num_derivatives])
+{
+  // int timesteps_to_keep = longest_time_between_dots(...)
+  array_.resize(boost::extents[num_particles][
+      typename soltype_array<soltype>::extent_range(-window, num_timesteps)]
+                              [num_derivatives]);
   outfile.open("output.dat");
   outfile << std::scientific << std::setprecision(15);
 }
