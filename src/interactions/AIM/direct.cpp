@@ -30,8 +30,7 @@ const InteractionBase::ResultArray &AIM::DirectInteraction::evaluate(
 
     for(int i = 1; i < shape_[1]; ++i) {
       const int s =
-          std::max(time_idx - floor_delays_[pair_idx] - i,
-                   static_cast<int>(history->array_.index_bases()[1]));
+          std::max(time_idx - floor_delays_[pair_idx] - i, -history->window);
 
       past_terms_of_convolution[pair.first] +=
           (history->get_value(pair.second, s, 0))[RHO_01] *
@@ -41,8 +40,8 @@ const InteractionBase::ResultArray &AIM::DirectInteraction::evaluate(
           coefficients_[pair_idx][i];
     }
 
-    const int s = std::max(time_idx - floor_delays_[pair_idx],
-                           static_cast<int>(history->array_.index_bases()[1]));
+    const int s =
+        std::max(time_idx - floor_delays_[pair_idx], -history->window);
 
     results[pair.first] += (history->get_value(pair.second, s, 0))[RHO_01] *
                            coefficients_[pair_idx][0];
@@ -63,8 +62,8 @@ AIM::DirectInteraction::evaluate_present_field(const int time_idx)
   for(int pair_idx = 0; pair_idx < shape_[0]; ++pair_idx) {
     const auto &pair = (*interaction_pairs_)[pair_idx];
 
-    const int s = std::max(time_idx - floor_delays_[pair_idx],
-                           static_cast<int>(history->array_.index_bases()[1]));
+    const int s =
+        std::max(time_idx - floor_delays_[pair_idx], -history->window);
 
     results[pair.first] += (history->get_value(pair.second, s, 0))[RHO_01] *
                            coefficients_[pair_idx][0];

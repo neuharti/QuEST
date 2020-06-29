@@ -49,9 +49,8 @@ Integrator::PredictorCorrector<soltype>::PredictorCorrector(
     const double radius,
     const std::shared_ptr<Integrator::History<soltype>> history,
     std::unique_ptr<Integrator::RHS<soltype>> rhs)
-    : num_solutions(history->array_.shape()[0]),
-      time_idx_ubound(history->array_.index_bases()[1] +
-                      history->array_.shape()[1]),
+    : num_solutions(history->num_particles),
+      time_idx_ubound(history->num_timesteps),
       dt(dt),
       num_corrector_steps(num_corrector_steps),
       weights(n_lambda, n_time, radius),

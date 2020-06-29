@@ -41,8 +41,7 @@ const InteractionBase::ResultArray &AIM::Nearfield::evaluate(const int time_idx)
     const auto &pair = (*interaction_pairs_)[pair_idx];
 
     for(int t = support_[pair_idx].begin + 1; t < support_[pair_idx].end; ++t) {
-      const int s = std::max(
-          time_idx - t, static_cast<int>(history->array_.index_bases()[1]));
+      const int s = std::max(time_idx - t, -history->window);
 
       past_terms_of_convolution[pair.first] +=
           (history->get_value(pair.second, s, 0))[RHO_01] *
@@ -52,8 +51,7 @@ const InteractionBase::ResultArray &AIM::Nearfield::evaluate(const int time_idx)
           coefficients_[pair_idx][t][1];
     }
     int t = support_[pair_idx].begin;
-    const int s = std::max(time_idx - t,
-                           static_cast<int>(history->array_.index_bases()[1]));
+    const int s = std::max(time_idx - t, -history->window);
     assert(support_[pair_idx].begin == 0);
 
     results[pair.first] += (history->get_value(pair.second, s, 0))[RHO_01] *
@@ -77,8 +75,7 @@ const InteractionBase::ResultArray &AIM::Nearfield::evaluate_present_field(
     const auto &pair = (*interaction_pairs_)[pair_idx];
 
     int t = support_[pair_idx].begin;
-    const int s = std::max(time_idx - t,
-                           static_cast<int>(history->array_.index_bases()[1]));
+    const int s = std::max(time_idx - t, -history->window);
     assert(support_[pair_idx].begin == 0);
 
     results[pair.first] += (history->get_value(pair.second, s, 0))[RHO_01] *

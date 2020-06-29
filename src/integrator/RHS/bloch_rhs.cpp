@@ -6,7 +6,7 @@ Integrator::BlochRHS::BlochRHS(
     std::vector<std::shared_ptr<InteractionBase>> interactions,
     std::vector<BlochFunctionType> rhs_functions)
     : Integrator::RHS<Eigen::Vector2cd>(dt, history),
-      num_solutions(history->array_.shape()[0]),
+      num_solutions(history->num_particles),
       interactions(std::move(interactions)),
       rhs_functions(std::move(rhs_functions))
 {

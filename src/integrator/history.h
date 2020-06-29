@@ -34,7 +34,6 @@ class Integrator::History {
           std::shared_ptr<DotVector>,
           const int = 2);
   ~History();
-  soltype_array<soltype> array_;  // TODO: make private
 
   void fill(const soltype &);
   void initialize_past(const soltype &);
@@ -45,9 +44,14 @@ class Integrator::History {
 
   int num_particles;
   int num_timesteps;
+  int window;
 
  private:
+  bool circular_buffer;
+  soltype_array<soltype> array_;
   std::ofstream outfile;
+  int time_idx_in_array(const int) const;
+
   template <class B = soltype>
   typename std::enable_if<std::is_same<B, Eigen::Vector2cd>::value,
                           Eigen::RowVector2cd>::type
@@ -65,11 +69,12 @@ Integrator::History<soltype>::History(const int num_particles,
                                       const int num_derivatives)
     : num_particles(num_particles),
       num_timesteps(num_timesteps),
+      window(window),
       array_(boost::extents[num_particles][
           typename soltype_array<soltype>::extent_range(-window, num_timesteps)]
                            [num_derivatives])
 {
-  // outfile = std::make_unique<std::ofstream>("output.dat");
+  circular_buffer = false;
   outfile.open("output.dat");
   outfile << std::scientific << std::setprecision(15);
 }
@@ -82,12 +87,10 @@ Integrator::History<soltype>::History(const int num_particles,
                                       const double c0,
                                       std::shared_ptr<DotVector> dots,
                                       const int num_derivatives)
-    : num_particles(num_particles),
-      num_timesteps(num_timesteps),
-      array_(boost::extents[num_particles][
-          typename soltype_array<soltype>::extent_range(-window, num_timesteps)]
-                           [num_derivatives])
+    : num_particles(num_particles), num_timesteps(num_timesteps), window(window)
 {
+  circular_buffer = false;
+  assert(window < num_timesteps);
   // int timesteps_to_keep = longest_time_between_dots(...)
   array_.resize(boost::extents[num_particles][
       typename soltype_array<soltype>::extent_range(-window, num_timesteps)]
@@ -119,12 +122,22 @@ void Integrator::History<soltype>::initialize_past(const soltype &val)
 }
 
 template <class soltype>
+
+int Integrator::History<soltype>::time_idx_in_array(const int time_idx) const
+{
+  if(circular_buffer)
+    return (time_idx > 0) ? time_idx % num_timesteps : num_timesteps - window;
+  else
+    return time_idx;
+}
+
+template <class soltype>
 soltype Integrator::History<soltype>::get_value(const int particle_idx,
                                                 const int time_idx,
                                                 const int derivative_idx) const
 {
-  int modular_time_idx = time_idx % static_cast<int>(array_.shape()[TIMES]);
-  return array_[particle_idx][modular_time_idx][derivative_idx];
+  int t = time_idx_in_array(time_idx);
+  return array_[particle_idx][t][derivative_idx];
 }
 
 template <class soltype>
@@ -132,8 +145,8 @@ soltype &Integrator::History<soltype>::set_value(const int particle_idx,
                                                  const int time_idx,
                                                  const int derivative_idx)
 {
-  int modular_time_idx = time_idx % static_cast<int>(array_.shape()[TIMES]);
-  return array_[particle_idx][time_idx][derivative_idx];
+  int t = time_idx_in_array(time_idx);
+  return array_[particle_idx][t][derivative_idx];
 }
 
 template <class soltype>

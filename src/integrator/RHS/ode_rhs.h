@@ -33,7 +33,7 @@ Integrator::ODE_RHS::ODE_RHS(
 void Integrator::ODE_RHS::evaluate(const int n) const
 {
   const double time = n * dt;
-  for(int i = 0; i < static_cast<int>(history->array_.shape()[0]); ++i) {
+  for(int i = 0; i < history->num_particles; ++i) {
     history->set_value(i, n, 1) =
         rhs_functions[i](history->get_value(i, n, 0), time);
   }
