@@ -89,12 +89,12 @@ Integrator::History<soltype>::History(const int num_particles,
                                       const int num_derivatives)
     : num_particles(num_particles), num_timesteps(num_timesteps), window(window)
 {
-  circular_buffer = false;  // TODO: actually implement the circular_buffer
-  assert(window < num_timesteps);
+  circular_buffer = true;  // TODO: actually implement the circular_buffer
+  assert(window < static_cast<int>(array_.shape()[1]));
+
+  array_.resize(boost::extents[num_particles][num_timesteps][num_derivatives]);
   // int timesteps_to_keep = longest_time_between_dots(...)
-  array_.resize(boost::extents[num_particles][
-      typename soltype_array<soltype>::extent_range(-window, num_timesteps)]
-                              [num_derivatives]);
+
   outfile.open("output.dat");
   outfile << std::scientific << std::setprecision(15);
 }
@@ -124,7 +124,9 @@ template <class soltype>
 int Integrator::History<soltype>::time_idx_in_array(const int time_idx) const
 {
   if(circular_buffer)
-    return (time_idx > 0) ? time_idx % num_timesteps : num_timesteps - window;
+    return (time_idx >= static_cast<int>(array_.shape()[TIMES]))
+               ? time_idx % num_timesteps
+               : static_cast<int>(array_.shape()[1]) - 1 - time_idx;
   else
     return time_idx;
 }
