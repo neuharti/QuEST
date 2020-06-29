@@ -89,7 +89,7 @@ Integrator::History<soltype>::History(const int num_particles,
                                       const int num_derivatives)
     : num_particles(num_particles), num_timesteps(num_timesteps), window(window)
 {
-  circular_buffer = false;
+  circular_buffer = false;  // TODO: actually implement the circular_buffer
   assert(window < num_timesteps);
   // int timesteps_to_keep = longest_time_between_dots(...)
   array_.resize(boost::extents[num_particles][
@@ -115,9 +115,7 @@ template <class soltype>
 void Integrator::History<soltype>::initialize_past(const soltype &val)
 {
   for(int n = 0; n < static_cast<int>(array_.shape()[PARTICLES]); ++n) {
-    for(int t = array_.index_bases()[TIMES]; t <= 0; ++t) {
-      array_[n][t][DERIV_0] = val;
-    }
+    for(int t = -window; t <= 0; ++t) { set_value(n, t, DERIV_0) = val; }
   }
 }
 
