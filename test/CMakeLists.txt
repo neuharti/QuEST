@@ -10,12 +10,15 @@ if(${Boost_FOUND})
 
   target_sources(qtest-bin
     PUBLIC
-      "${CMAKE_CURRENT_LIST_DIR}/integrator_test.cpp"
+      # "${CMAKE_CURRENT_LIST_DIR}/integrator_test.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/lagrange_set_test.cpp"
       #"${CMAKE_CURRENT_LIST_DIR}/math_utils_test.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/propagator_test.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/pulse_interaction_test.cpp"
       "${CMAKE_CURRENT_LIST_DIR}/quantum_dot_test.cpp"
+      # "${CMAKE_CURRENT_LIST_DIR}/circular_buffer_test.cpp"
+      "${CMAKE_CURRENT_LIST_DIR}/circular_buffer_test.cpp"
+
   )
 
   #add_subdirectory("rapidcheck")

@@ -29,6 +29,21 @@ Eigen::Vector3d separation(const QuantumDot &d1, const QuantumDot &d2)
   return d2.pos - d1.pos;
 }
 
+int max_transit_steps_between_dots(const std::shared_ptr<DotVector> dots,
+                                   const double c,
+                                   const double dt)
+{
+  // TODO: find the max separation between two dots
+  double max_separation{0};
+  for(auto dot_i_it = (*dots).begin(); dot_i_it != (*dots).end(); ++dot_i_it) {
+    for(auto dot_j_it = dot_i_it + 1; dot_j_it != (*dots).end(); ++dot_j_it) {
+      max_separation =
+          std::max(max_separation, separation(*dot_i_it, *dot_j_it).norm());
+    }
+  }
+  return std::ceil(max_separation / (c * dt));
+}
+
 std::ostream &operator<<(std::ostream &os, const QuantumDot &qd)
 {
   os << qd.pos.transpose() << " " << qd.freq << " " << qd.damping.first << " "

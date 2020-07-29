@@ -44,6 +44,9 @@ class QuantumDot {
   const Eigen::Vector3d &position() const { return pos; }
   const Eigen::Vector3d &dipole() const { return dip; }
   friend Eigen::Vector3d separation(const QuantumDot &, const QuantumDot &);
+  friend int max_transit_steps_between_dots(const std::shared_ptr<DotVector>,
+                                            const double,
+                                            const double);
   friend inline double dyadic_product(const QuantumDot &obs,
                                       const Eigen::Matrix3d &dyad,
                                       const QuantumDot &src)
@@ -62,7 +65,8 @@ class QuantumDot {
 };
 
 DotVector import_dots(const std::string &);
-std::vector<BlochFunctionType> rhs_functions(const DotVector &, const double,
+std::vector<BlochFunctionType> rhs_functions(const DotVector &,
+                                             const double,
                                              bool);
 
 #endif

@@ -13,8 +13,11 @@ BOOST_AUTO_TEST_CASE(CONSTRUCTOR)
   auto dots = std::make_shared<DotVector>();
   dots->push_back(QuantumDot({0, 0, 0}, {0, 0, 1}));
 
+  int min_time_to_keep = max_transit_steps_between_dots(dots, 1, 1);
+
   using hist_t = Integrator::History<Eigen::Vector2cd>;
-  auto hist = std::make_shared<hist_t>(1, 10, 1024, 1);
+  // auto hist = std::make_shared<hist_t>(1, 10, 1024, 1);
+  auto hist = std::make_shared<hist_t>(1, 10, 1024, min_time_to_keep, 1);
 
   auto grid = std::make_shared<AIM::Grid>(Eigen::Array3d(1, 1, 1), 1, *dots);
 

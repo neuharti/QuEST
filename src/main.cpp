@@ -43,10 +43,11 @@ int main(int argc, char *argv[])
     if(durationLogger) { durationLogger->log_event("Import dots"); }
 
     // == HISTORY ====================================================
-
+    int min_time_to_keep =
+        max_transit_steps_between_dots(qds, config.c0, config.dt) +
+        config.interpolation_order;
     auto history = make_shared<Integrator::History<Eigen::Vector2cd>>(
-        config.num_particles, 22, config.num_timesteps, config.dt, config.c0,
-        qds);
+        config.num_particles, 22, config.num_timesteps, min_time_to_keep);
     history->fill(Eigen::Vector2cd::Zero());
     history->initialize_past(Eigen::Vector2cd(1, 0));
 
