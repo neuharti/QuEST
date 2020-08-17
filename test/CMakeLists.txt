@@ -21,8 +21,18 @@ if(${Boost_FOUND})
 
   )
 
+
   #add_subdirectory("rapidcheck")
   #add_subdirectory("rapidcheck/extras/boost_test")
 
   target_link_libraries(qtest-bin PUBLIC quest ${Boost_LIBRARIES})# rapidcheck rapidcheck_boost_test)
+
+  add_executable(static_test-bin "")
+  set_target_properties(static_test-bin PROPERTIES OUTPUT_NAME static_test)
+  target_sources(static_test-bin PUBLIC "${CMAKE_CURRENT_LIST_DIR}/static_buffer_test.cpp")
+  target_compile_features(static_test-bin PUBLIC ${CPP_FEATURES})
+  target_include_directories(static_test-bin PUBLIC ${EIGEN3_INCLUDE_DIR})
+  target_link_libraries(static_test-bin PUBLIC quest ${Boost_LIBRARIES})
+
+
 endif(${Boost_FOUND})
