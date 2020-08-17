@@ -56,23 +56,6 @@ class Integrator::History {
                           soltype>::type prep_for_output(soltype);
 };
 
-// template <class soltype>
-// Integrator::History<soltype>::History(const int num_particles,
-//                                       const int window,
-//                                       const int num_timesteps,
-//                                       const int num_derivatives)
-//     : num_particles(num_particles),
-//       num_timesteps(num_timesteps),
-//       window(window),
-//       array_(boost::extents[num_particles][
-//           typename soltype_array<soltype>::extent_range(-window,
-//           num_timesteps)]
-//                            [num_derivatives])
-// {
-//   outfile.open("output.dat");
-//   outfile << std::scientific << std::setprecision(15);
-// }
-
 template <class soltype>
 Integrator::History<soltype>::History(const int num_particles,
                                       const int window,
@@ -83,33 +66,14 @@ Integrator::History<soltype>::History(const int num_particles,
 {
   // TODO: need to make the minimum: max_transit_steps_between_dots +
   // interpolation_order
-  int time_idx_ubound = std::max(min_time_idx_ubound, window + 1);
-  assert(window < time_idx_ubound);
+  int time_idx_ubound = std::max(min_time_idx_ubound, window) + 10;
 
-  // window + 209, why the hell does this only work for t:[0, 231)
   array_.resize(
-      boost::extents[num_particles][time_idx_ubound + 250][num_derivatives]);
-  // int timesteps_to_keep = longest_time_between_dots(...)
+      boost::extents[num_particles][time_idx_ubound][num_derivatives]);
 
   outfile.open("output.dat");
   outfile << std::scientific << std::setprecision(15);
 }
-
-// template <class soltype>
-// int Integrator::History<soltype>::max_transit_steps(
-//     const double c0, const double dt, std::shared_ptr<DotVector> dots)
-// {
-//   double max_distance = 0;
-//   for(int i = 0; i != dots->size(); ++i) {
-//     for(int j = i + 1; j != dots->size(); ++j) {
-//       double temp_distance = separation((*dots)[i], (*dots)[j]).norm();
-//       max_distance =
-//           (max_distance > temp_distance) ? max_distance : temp_distance;
-//     }
-//   }
-//   int max_timesteps = std::ceil(max_distance / (c0 * dt));
-//   return max_timesteps;
-// }
 
 template <class soltype>
 Integrator::History<soltype>::~History()
