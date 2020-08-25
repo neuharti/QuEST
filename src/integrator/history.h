@@ -71,6 +71,11 @@ Integrator::History<soltype>::History(const int num_particles,
   array_.resize(
       boost::extents[num_particles][time_idx_ubound][num_derivatives]);
 
+  //std::cout << "History Array Shape:\n"
+  //          << "\tparticle dimension: " << num_particles << "\n"
+  //          << "\ttime dimension: " << time_idx_ubound << "\n"
+  //          << "\tderivative dimension: " << num_derivatives << std::endl;
+
   outfile.open("output.dat");
   outfile << std::scientific << std::setprecision(15);
 }
@@ -98,12 +103,11 @@ void Integrator::History<soltype>::initialize_past(const soltype &val)
 template <class soltype>
 int Integrator::History<soltype>::time_idx_in_array(const int time_idx) const
 {
-  int time_base = 0;  // static_cast<int>(array_.index_bases()[1]);
   int time_idx_ubound =
       static_cast<int>(array_.index_bases()[1] + array_.shape()[1]);
 
-  return (time_idx >= time_base) ? time_idx % time_idx_ubound
-                                 : time_idx_ubound - abs(time_idx);
+  return (time_idx >= 0) ? time_idx % time_idx_ubound
+                         : time_idx_ubound - std::abs(time_idx);
 }
 
 template <class soltype>
