@@ -12,6 +12,8 @@
 #include "../src/math_utils.h"
 #include "../src/quantum_dot.h"
 
+#define NEW_HISTORY 1
+
 const double c0(1);
 const double dt(1);
 const int num_timesteps(500);
@@ -49,8 +51,14 @@ int main(int argc, char *argv[])
   std::cout << "interpolation order: " << interp << std::endl;
 
   int min_time_to_keep = max_transit_steps_between_dots(dots, c0, dt) + interp;
-  auto history = std::make_shared<Integrator::History<Eigen::Vector2cd>>(
-      (*dots).size(), window, num_timesteps, min_time_to_keep, 2);
+ 
+  std::shared_ptr<Integrator::History<Eigen::Vector2cd>> history;
+  if( NEW_HISTORY ) {
+    history = std::make_shared<Integrator::History<Eigen::Vector2cd>>(
+        (*dots).size(), window, num_timesteps, min_time_to_keep, 2);
+  } else {
+    exit(0);
+  }
 
   std::cout << "timesteps between dots: " 
             << min_time_to_keep - interp 
