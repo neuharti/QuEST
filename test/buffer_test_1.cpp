@@ -41,8 +41,8 @@ int main(int argc, char *argv[])
   double delay = separation((*dots)[0], (*dots)[1]).norm() / c0;
 
   // initialize identity kernel
-  Propagation::Identity<cmplx> identity_kernel;
-
+  //Propagation::Identity<cmplx> identity_kernel;
+  Propagation::EFIE<cmplx> identity_kernel(c0, 1); // not really though
   // initialize history array
   int interp;
   if(argc > 1)
@@ -88,8 +88,8 @@ int main(int argc, char *argv[])
     max_diff = std::max(max_diff, calculated_field[1].real() - analytic_field);
   }
 
-  std::cout << "total error: " << total_diff << std::endl;
-  std::cout << "max error: " << max_diff << std::endl;
+  //std::cout << "total error: " << total_diff << std::endl;
+  //std::cout << "max error: " << max_diff << std::endl;
   outfile.close();
   return 0;
 }
