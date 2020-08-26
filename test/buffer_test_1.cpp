@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <fstream>
 
 #include "../src/common.h"
 #include "../src/configuration.h"
@@ -75,17 +76,20 @@ int main(int argc, char *argv[])
   // main loop
   ResultArray calculated_field;
   double total_diff(0), max_diff(0), analytic_field;
+  
+  std::ofstream outfile("new_history_static.dat");
   for(int i = 0; i < num_timesteps; i++) {
     history->set_value(0, i, 0) = Eigen::Vector2cd(0, src_fn(i * dt, omega));
     calculated_field = direct_interaction.evaluate(i);
     analytic_field = obs_fn(i * dt, omega, delay); 
-    
+   
+    outfile << calculated_field[1].real() << "\n";
     total_diff += std::abs(calculated_field[1].real() - analytic_field);
     max_diff = std::max(max_diff, calculated_field[1].real() - analytic_field);
   }
 
   std::cout << "total error: " << total_diff << std::endl;
   std::cout << "max error: " << max_diff << std::endl;
-
+  outfile.close();
   return 0;
 }
