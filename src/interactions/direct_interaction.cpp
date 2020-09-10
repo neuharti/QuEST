@@ -54,6 +54,13 @@ const InteractionBase::ResultArray &DirectInteraction::evaluate(
     int src, obs;
     std::tie(src, obs) = idx2coord(pair_idx);
 
+    const int s0 =
+        std::max(time_idx - floor_delays[pair_idx], -history->window);
+    results[src] +=
+        (history->get_value(obs, s0, 0))[RHO_01] * coefficients[pair_idx][0];
+    results[obs] +=
+        (history->get_value(src, s0, 0))[RHO_01] * coefficients[pair_idx][0];
+
     for(int i = 1; i <= interp_order; ++i) {
       const int s =
           std::max(time_idx - floor_delays[pair_idx] - i, -history->window);
@@ -63,15 +70,8 @@ const InteractionBase::ResultArray &DirectInteraction::evaluate(
       past_terms_of_convolution[obs] +=
           (history->get_value(src, s, 0))[RHO_01] * coefficients[pair_idx][i];
     }
-    const int s = time_idx - floor_delays[pair_idx];
-    // const int s = std::max(time_idx - floor_delays[pair_idx],
-    // -history->window);
-
-    results[src] +=
-        (history->get_value(obs, s, 0))[RHO_01] * coefficients[pair_idx][0];
-    results[obs] +=
-        (history->get_value(src, s, 0))[RHO_01] * coefficients[pair_idx][0];
   }
+
   results += past_terms_of_convolution;
   return results;
 }
@@ -87,9 +87,8 @@ const InteractionBase::ResultArray &DirectInteraction::evaluate_present_field(
     int src, obs;
     std::tie(src, obs) = idx2coord(pair_idx);
 
-    const int s = time_idx - floor_delays[pair_idx];
-    // const int s = std::max(time_idx - floor_delays[pair_idx],
-    // -history->window);
+    // const int s = time_idx - floor_delays[pair_idx];
+    const int s = std::max(time_idx - floor_delays[pair_idx], -history->window);
 
     results[src] +=
         (history->get_value(obs, s, 0))[RHO_01] * coefficients[pair_idx][0];

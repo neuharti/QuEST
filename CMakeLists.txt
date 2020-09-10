@@ -17,7 +17,7 @@ enable_cxx_compiler_flag_if_supported("-Wall")
 enable_cxx_compiler_flag_if_supported("-Wextra")
 enable_cxx_compiler_flag_if_supported("-fdiagnostics-color=auto")
 enable_cxx_compiler_flag_if_supported("-pedantic")
-# enable_cxx_compiler_flag_if_supported("-g")
+#enable_cxx_compiler_flag_if_supported("-g")
 
 
 # Require a C++14 standard

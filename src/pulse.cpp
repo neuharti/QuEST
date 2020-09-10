@@ -24,8 +24,9 @@ Eigen::Vector3d Pulse::operator()(const Eigen::Vector3d &r,
 
   Eigen::Vector3d pulse_vector;
   pulse_vector = (amplitude / 2 * polarization) * gaussian(arg / width);
-
   pulse_vector *= rotating ? 1.0 : cos(arg);
+  //pulse_vector *= rotating ? 1.0 : 2.0 * cos(arg);
+  //pulse_vector = amplitude * polarization * gaussian(arg / width) * cos(arg);
 
   return pulse_vector;
 }

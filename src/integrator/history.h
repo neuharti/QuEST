@@ -1,9 +1,9 @@
 #ifndef HISTORY_H
 #define HISTORY_H
 
-#include <assert.h>
 #include <Eigen/Dense>
 #include <boost/multi_array.hpp>
+#include <cmath>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -26,7 +26,6 @@ namespace Integrator {
 template <class soltype>
 class Integrator::History {
  public:
-  // History(const int, const int, const int, const int = 2);
   History(const int, const int, const int, const int = -1, const int = 2);
   ~History();
 
@@ -34,7 +33,6 @@ class Integrator::History {
   void initialize_past(const soltype &);
   soltype &set_value(const int, const int, const int);
   soltype get_value(const int, const int, const int) const;
-
   void write_step_to_file(const int);
 
   int num_particles;
@@ -45,7 +43,6 @@ class Integrator::History {
   soltype_array<soltype> array_;
   std::ofstream outfile;
   int time_idx_in_array(const int) const;
-  // friend int time_idx_in_array(const int);
   template <class B = soltype>
   typename std::enable_if<std::is_same<B, Eigen::Vector2cd>::value,
                           Eigen::RowVector2cd>::type
@@ -64,17 +61,9 @@ Integrator::History<soltype>::History(const int num_particles,
                                       const int num_derivatives)
     : num_particles(num_particles), num_timesteps(num_timesteps), window(window)
 {
-  // TODO: need to make the minimum: max_transit_steps_between_dots +
-  // interpolation_order
   int time_idx_ubound = std::max(min_time_idx_ubound, window) + 10;
-
   array_.resize(
       boost::extents[num_particles][time_idx_ubound][num_derivatives]);
-
-  //std::cout << "History Array Shape:\n"
-  //          << "\tparticle dimension: " << num_particles << "\n"
-  //          << "\ttime dimension: " << time_idx_ubound << "\n"
-  //          << "\tderivative dimension: " << num_derivatives << std::endl;
 
   outfile.open("output.dat");
   outfile << std::scientific << std::setprecision(15);
@@ -103,11 +92,15 @@ void Integrator::History<soltype>::initialize_past(const soltype &val)
 template <class soltype>
 int Integrator::History<soltype>::time_idx_in_array(const int time_idx) const
 {
+  int time_idx_lbound = static_cast<int>(array_.index_bases()[1]);
   int time_idx_ubound =
       static_cast<int>(array_.index_bases()[1] + array_.shape()[1]);
 
-  return (time_idx >= 0) ? time_idx % time_idx_ubound
-                         : time_idx_ubound - std::abs(time_idx);
+  const int t_in_arr = (time_idx >= time_idx_lbound)
+                           ? time_idx % time_idx_ubound
+                           : time_idx_ubound - std::abs(time_idx);
+
+  return t_in_arr;
 }
 
 template <class soltype>
